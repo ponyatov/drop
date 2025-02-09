@@ -156,3 +156,4 @@ SECTIONS
     libm.a   ( * )
     libgcc.a ( * )
   }
+}
