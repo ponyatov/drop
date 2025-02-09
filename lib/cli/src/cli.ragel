@@ -1,0 +1,49 @@
+
+#include "os.hpp"
+#include "cli.hpp"
+
+%%machine cli;
+%%write  data;
+
+static int   cs  = 0;           ///< current state
+static int   act = 0;           ///< ???
+static char* eof = nullptr;     ///< end of file marker
+static char* ts  = nullptr;     ///< token start
+static char* te  = nullptr;     ///< token end
+
+void cli(char* p, char* pe) {
+    eof = pe; cs = act = 0; ts = te = nullptr;
+    %%write init;
+    %%write exec;
+}
+
+%%{
+    comment = '#' [^\n]*;                   # comment
+    nl      = '\n';                         # new line
+    sp      = [ \r\t]+;                     # drop spaces
+
+    sign    = [+\-];                        # sign
+    num     = sign ? digit+ '.' digit+;     # floating point
+    dec     = sign ? digit+;                # decimal int
+    hex     = "0x" [0-9a-fA-F]+;            # hexadecimal
+    oct     = "0o" [0-7]+;                  # octal
+    bin     = "0b" [01]+;                   # binary
+
+    id      = [_a-zA-Z][_a-zA-Z0-9]*;       # variable/name
+
+    cli := |*
+        comment => { };
+        nl+     => { yylineno += te-ts; /* count line */ };
+        sp      => { };
+
+        num     => { printf("\t\t%i: num:%f\n",yylineno,num(ts,te)); };
+        hex     => { printf("\t\t%i: hex:%x\n",yylineno,hex(ts,te)); };
+        oct     => { printf("\t\t%i: oct:%o\n",yylineno,oct(ts,te)); };
+        bin     => { printf("\t\t%i: bin:%i\n",yylineno,bin(ts,te)); };
+        dec     => { printf("\t\t%i: int:%i\n",yylineno,dec(ts,te)); };
+
+        id      => { printf("\t\t%i:  id:%s\n",yylineno,strndupa(ts,te-ts)); };
+
+        any     => { yyerror(strndup(ts,te-ts)); };
+    *|;
+}%%
