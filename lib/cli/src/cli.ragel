@@ -42,7 +42,7 @@ void cli(char* p, char* pe) {
         bin     => { printf("\t\t%i: bin:%i\n",yylineno,bin(ts,te)); };
         dec     => { printf("\t\t%i: int:%i\n",yylineno,dec(ts,te)); };
 
-        id      => { printf("\t\t%i:  id:%s\n",yylineno,strndupa(ts,te-ts)); };
+        id      => { printf("\t\t%i:  id:%s\n",yylineno,strndup(ts,te-ts)); };
 
         any     => { yyerror(strndup(ts,te-ts)); };
     *|;

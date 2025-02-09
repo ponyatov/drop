@@ -1,11 +1,11 @@
 #include "object.hpp"
 #include "int.hpp"
+#include "parser.hpp"
+#include <string.h>
 
-#include <string>
-
-Int::Int(char *s) : Prim() { value = atoi(s); }
 Int::Int(int n) : Prim() { value = n; }
 
-Hex::Hex(char *s) : Int(std::stol(s, nullptr, 0x10)) {}
-Oct::Oct(char *s) : Int(std::stol(s, nullptr, 0x08)) {}
-Bin::Bin(char *s) : Int(std::stol(s, nullptr, 0x02)) {}
+Int::Int(char *s) : Prim(), value(hex(s, s + strlen(s))) {}
+Hex::Hex(char *s) : Int(hex(s, s + strlen(s))) {}
+Oct::Oct(char *s) : Int(oct(s, s + strlen(s))) {}
+Bin::Bin(char *s) : Int(bin(s, s + strlen(s))) {}

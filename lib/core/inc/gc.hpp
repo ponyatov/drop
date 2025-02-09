@@ -1,3 +1,3 @@
 /// @defgroup gc gc
-/// @ingroup core
+/// @ingroup vm
 /// @brief garbage collector
